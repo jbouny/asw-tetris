@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Tetris</title>
+		<link href="assets/css/bootstrap.min.css" rel="stylesheet">
+		<link href="assets/css/style.css" rel="stylesheet">
+	</head>
+
+	<body>
+		<div id="style-selector">
+			<button id="select-3d">WebGL 3D</button>
+			<button id="select-2d">Canvas 2D</button>
+			<button id="select-ascii">ASCII</button>
+		</div>
+		
+		<div id="controls">
+			<div id="ctrl-left">Left</div>
+			<div id="ctrl-right">Right</div>
+			<div id="ctrl-rotate">Rotate</div>
+			<div id="ctrl-fall">Fall</div>
+			<div id="ctrl-down">Down</div>
+			<div id="ctrl-switch">Switch</div>
+		</div>
+		
+		<canvas id="canvas-2d" class="viewer"></canvas>
+		<div id="canvas-ascii" class="viewer"></div>
+		<div id="canvas-3d" class="viewer"></div>
+		
+		<script src="assets/libs/jquery.min.js"></script>
+		<script src="assets/libs/three.min.js"></script>
+		<script src="assets/libs/shaders/BleachBypassShader.js"></script>
+		<script src="assets/libs/shaders/ColorCorrectionShader.js"></script>
+		<script src="assets/libs/shaders/CopyShader.js"></script>
+		<script src="assets/libs/shaders/FXAAShader.js"></script>
+		<script src="assets/libs/postprocessing/EffectComposer.js"></script>
+		<script src="assets/libs/postprocessing/RenderPass.js"></script>
+		<script src="assets/libs/postprocessing/ShaderPass.js"></script>
+		<script src="assets/libs/postprocessing/MaskPass.js"></script>
+		
+		<script src="assets/js/config.js"></script>
+		<script src="assets/js/window.js"></script>
+		<script src="assets/js/game.js"></script>
+		<script src="assets/js/displayASCII.js"></script>
+		<script src="assets/js/display2D.js"></script>
+		<script src="assets/js/display3D.js"></script>
+		<script src="assets/js/display.js"></script>
+		<script src="assets/js/main.js"></script>
+	</body>
+</html>
