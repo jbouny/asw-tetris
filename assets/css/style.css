@@ -15,11 +15,12 @@ body {
 	padding : 10px 20px;
 	border-radius : 20px;
 	border : 1px solid #555;
-	background-color : #ccc;
-	font-size : 1.5em;
+	background-color : #fff;
+	font-size : 1.2em;
+	opacity : 0.4;
 }
 #style-selector button:hover {
-	background-color : #eee;
+	opacity : 0.7;
 }
 
 #canvas-ascii {

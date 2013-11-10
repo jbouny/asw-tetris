@@ -9,11 +9,12 @@
 
 	<body>
 		<div id="style-selector">
+			<button id="select-3dshader">WebGL 3D + Shaders</button>
 			<button id="select-3d">WebGL 3D</button>
 			<button id="select-2d">Canvas 2D</button>
 			<button id="select-ascii">ASCII</button>
 		</div>
-		
+		<!--
 		<div id="controls">
 			<div id="ctrl-left">Left</div>
 			<div id="ctrl-right">Right</div>
@@ -22,21 +23,25 @@
 			<div id="ctrl-down">Down</div>
 			<div id="ctrl-switch">Switch</div>
 		</div>
-		
+		-->
 		<canvas id="canvas-2d" class="viewer"></canvas>
 		<div id="canvas-ascii" class="viewer"></div>
 		<div id="canvas-3d" class="viewer"></div>
+		<div id="canvas-3dshader" class="viewer"></div>
 		
 		<script src="assets/libs/jquery.min.js"></script>
 		<script src="assets/libs/three.min.js"></script>
 		<script src="assets/libs/shaders/BleachBypassShader.js"></script>
 		<script src="assets/libs/shaders/ColorCorrectionShader.js"></script>
+		<script src="assets/libs/shaders/ConvolutionShader.js"></script>
 		<script src="assets/libs/shaders/CopyShader.js"></script>
 		<script src="assets/libs/shaders/FXAAShader.js"></script>
 		<script src="assets/libs/postprocessing/EffectComposer.js"></script>
+		<script src="assets/libs/postprocessing/BloomPass.js"></script>
 		<script src="assets/libs/postprocessing/RenderPass.js"></script>
 		<script src="assets/libs/postprocessing/ShaderPass.js"></script>
 		<script src="assets/libs/postprocessing/MaskPass.js"></script>
+		<script src="assets/libs/three/Mirror.js"></script>
 		
 		<script src="assets/js/config.js"></script>
 		<script src="assets/js/window.js"></script>
@@ -44,6 +49,7 @@
 		<script src="assets/js/displayASCII.js"></script>
 		<script src="assets/js/display2D.js"></script>
 		<script src="assets/js/display3D.js"></script>
+		<script src="assets/js/display3DShader.js"></script>
 		<script src="assets/js/display.js"></script>
 		<script src="assets/js/main.js"></script>
 	</body>

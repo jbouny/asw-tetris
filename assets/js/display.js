@@ -1,12 +1,13 @@
 var Display =
 {
 	ms_View: null,
-	ms_IdsViewers: [ 'ascii', '2d', '3d' ],
+	ms_IdsViewers: [ 'ascii', '2d', '3d', '3dshader' ],
 	ms_CurrentId: 0,
 	ms_Viewers: {
 		'ascii' : DisplayASCII,
 		'2d': Display2D,
-		'3d': Display3D
+		'3d': Display3D,
+		'3dshader': Display3DShader
 	},
 	Initialize: function()
 	{
