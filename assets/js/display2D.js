@@ -1,32 +1,28 @@
-var Display2D =
+/** 
+ * @author Jérémy BOUNY / https://github.com/jbouny | http://www.jeremybouny.fr
+ * @file js/displayASCII.js
+ * 
+ * Part of the project asw-tetris https://github.com/jbouny/asw-tetris
+ * 
+ * Display the tetris game in an 2D View.
+ */
+
+ var Display2D =
 {
 	ms_Canvas: null,
 	ms_Context: null,
 	ms_Scale: 0,
-	ms_Colors: {
-		0: "#0FF",
-		1: "#00F",
-		2: "#F90",
-		3: "#FF0",
-		4: "#F00",
-		5: "#C0F",
-		6: "#0F0",
-	},
+	ms_Colors: [ "#0FF", "#00F", "#F90", "#FF0", "#F00", "#C0F", "#0F0" ],
 	
 	Id: function() { return '2d'; },
-	
+	ConvertX: function( inX ) { return Window.ms_MiddleX - ( Config.ms_GameWidth * 0.5 - inX ) * Display2D.ms_Scale ; },
+	ConvertY: function( inY ) { return inY * Display2D.ms_Scale ; },
 	Initialize: function( inIdCanvas )
 	{
 		Display2D.ms_Canvas = document.getElementById( 'canvas-' + Display2D.Id() );
 		Display2D.ms_Context = Display2D.ms_Canvas.getContext( "2d" );
-		
 		Display2D.Resize( Window.ms_Width, Window.ms_Height );
 	},
-	
-	ConvertX: function( inX ) { return Window.ms_MiddleX - ( Config.ms_MiddleX - inX ) * Display2D.ms_Scale ; },
-	
-	ConvertY: function( inY ) { return inY * Display2D.ms_Scale ; },
-	
 	Display: function()
 	{
 		var aBlockSize = Display2D.ms_Scale - 1;
@@ -59,6 +55,18 @@ var Display2D =
 				var aBlock = Game.ms_Shape.m_Blocks[i];
 				Display2D.ms_Context.fillRect( Display2D.ConvertX( aBlock.m_X ), Display2D.ConvertY( aBlock.m_Y ), aBlockSize, aBlockSize ); 
 			}
+		}
+		
+		// Pause or game over
+		if( Game.ms_IsEnd || Game.ms_IsPause )
+		{
+			var aText = Game.ms_IsEnd ? "Game Over" : "Pause";
+			Display2D.ms_Context.fillStyle = "rgba(0, 0, 0, 0.5)";
+			Display2D.ms_Context.fillRect( Window.ms_MiddleX - 50, Window.ms_MiddleY - 30, 100, 30 ); 
+			Display2D.ms_Context.fillStyle = "#ffffff";
+			Display2D.ms_Context.textAlign = 'center';
+			Display2D.ms_Context.font = '12pt Calibri';
+			Display2D.ms_Context.fillText( aText, Window.ms_MiddleX, Window.ms_MiddleY - 10 );
 		}
 	},
 	Resize: function( inWidth, inHeight )

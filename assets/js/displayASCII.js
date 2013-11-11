@@ -1,73 +1,71 @@
+/** 
+ * @author Jérémy BOUNY / https://github.com/jbouny | http://www.jeremybouny.fr
+ * @file js/displayASCII.js
+ * 
+ * Part of the project asw-tetris https://github.com/jbouny/asw-tetris
+ * 
+ * Display the tetris game in an ASCII View.
+ */
+
 var DisplayASCII =
 {
 	ms_Canvas: null,
-	ms_BlockSize: 11,
-	ms_BlockRepeat: 2,
-	ms_SupColumns: 0,
-	ms_SupLines: 0,
-	ms_Map: null,
+	ms_BlockSize: 22,
+	ms_NbLines: 0,
+	ms_NbColumns: 0,
 	
 	Id: function() { return 'ascii'; },
 	
 	Initialize: function( inIdCanvas )
 	{
-		DisplayASCII.ms_Canvas = $( '#canvas-' + DisplayASCII.Id() );
-		DisplayASCII.ms_Map = new Array( Config.ms_GameHeighth );
-		for ( var i = 0; i < Config.ms_GameHeight; ++i )
-			DisplayASCII.ms_Map[i] = new Array( Config.ms_GameWidth );
-			
+		DisplayASCII.ms_Canvas = $( '#canvas-' + DisplayASCII.Id() );			
 	},
 	Display: function()
 	{
-		// Fill map with fixed blocks
-		for( var i = 0; i < Config.ms_GameHeight; ++i )
-			for( var j = 0; j < Config.ms_GameWidth; ++j )
-				DisplayASCII.ms_Map[i][j] = Game.ms_Blocks[i][j] == null ? "" : Game.ms_Blocks[i][j].m_Type;
-		
-		// Fill map with the movable shape
-		if( Game.ms_Shape != null )
-		{
-			for( var i = 0; i < Game.ms_Shape.m_Blocks.length; ++i ) 
-			{
-				var aBlock = Game.ms_Shape.m_Blocks[i];
-				DisplayASCII.ms_Map[aBlock.m_Y][aBlock.m_X] = aBlock.m_Type;
-			}
-		}
+		aBlocks = [];
+		for( var i = 0; i < 7; ++i )
+			aBlocks.push( "<bl" + i + ">#</bl" + i + ">" );
 		
 		// Create the view of this game in ASCII
-		var aLines = Array( Config.ms_GameHeight ),
-			aColumns = Array( Config.ms_GameWidth ),
-			aCurrentLine = 0;
+		var aMap = new Array( Config.ms_GameHeight );
 		for( var i = 0; i < Config.ms_GameHeight; ++i )
 		{
-			// Construct the current line of the game			
-			var aCurrentColumn = 0;
+			aMap[i] = new Array( Config.ms_GameWidth );
 			for( var j = 0; j < Config.ms_GameWidth; ++j )
-			{
-				var aRepeat = Math.round( DisplayASCII.ms_BlockRepeat + ( j < DisplayASCII.ms_SupColumns ? 1 : 0 ) );
-				var aValue = DisplayASCII.ms_Map[i][j];
-				aColumns[aCurrentColumn++] = ( aValue === "" )?
-					Array(aRepeat+1).join("&nbsp;") :
-					"<bl" + aValue + ">" + Array(aRepeat+1).join("#") + "</bl" + aValue + "/>";
-			}
-			aLines[aCurrentLine] = aColumns.join("");
-			
-			// Repeat the line a given number of times
-			var aRepeat = Math.round( DisplayASCII.ms_BlockRepeat + ( i < DisplayASCII.ms_SupLines ? 1 : 0 ) );
-			for( var aIter = 0; aIter < aRepeat; ++aIter )
-				aLines[aCurrentLine+1] = aLines[aCurrentLine++];
+				aMap[i][j] = Game.ms_Blocks[i][j];
 		}
-		// Construct the final display by joining all lines (use of join in order to optimize performance, act as a string buffer)
-		DisplayASCII.ms_Canvas.html( aLines.join( "<br/>" ) );
+		if( Game.ms_Shape != null )
+			for( var i = 0; i < Game.ms_Shape.m_Blocks.length; ++i ) 
+				aMap[Game.ms_Shape.m_Blocks[i].m_Y][Game.ms_Shape.m_Blocks[i].m_X] = Game.ms_Shape.m_Blocks[i];
+		
+		var aLinePause = Game.ms_IsPause? Math.round( DisplayASCII.ms_NbLines / 2 ) : -1; 
+		var aLineEnd = Game.ms_IsEnd? Math.round( DisplayASCII.ms_NbLines / 2 ) : -1; 
+		var aDisplay = "";
+		for( var i = 0; i < DisplayASCII.ms_NbLines; ++i )
+		{
+			if( i == aLinePause )
+				aDisplay += Array( Math.round( Math.max( DisplayASCII.ms_NbColumns / 2 - 5, 0 ) ) ).join('&nbsp;') + '## PAUSE ##';
+			else if( i == aLineEnd )
+				aDisplay += Array( Math.round( Math.max( DisplayASCII.ms_NbColumns / 2 - 7, 0 ) ) ).join('&nbsp;') + '## GAME OVER ##';
+			else
+			{
+				var aY = Math.floor( Config.ms_GameHeight * i / DisplayASCII.ms_NbLines );
+				for( var j = 0; j < DisplayASCII.ms_NbColumns; ++j )
+				{
+					var aBlock =  aMap[aY][Math.floor( Config.ms_GameWidth * j / DisplayASCII.ms_NbColumns )];
+					aDisplay += ( aBlock == null )? '&nbsp;' : aBlocks[aBlock.m_Type];
+				}
+			}
+			aDisplay += "<br/>";
+		}
+		DisplayASCII.ms_Canvas.html( aDisplay );
 	},
 	Resize: function( inWidth, inHeight )
 	{
 		// Compute the number of lines and columns to correctly fill the screen
-		var aNbLines = Math.floor( inHeight / DisplayASCII.ms_BlockSize );
-		DisplayASCII.ms_BlockRepeat = Math.max( 1, Math.floor( aNbLines / Config.ms_GameHeight ) );
-		DisplayASCII.ms_SupLines = Math.max( 0, Math.round( aNbLines - DisplayASCII.ms_BlockRepeat * Config.ms_GameHeight ) );
-		DisplayASCII.ms_SupColumns = Math.round( Config.ms_GameWidth * DisplayASCII.ms_SupLines / Config.ms_GameHeight );		
-		DisplayASCII.ms_Canvas.css( "width", DisplayASCII.ms_BlockSize * ( DisplayASCII.ms_BlockRepeat * Config.ms_GameWidth + DisplayASCII.ms_SupColumns ) );
-		DisplayASCII.ms_Canvas.css( "height", DisplayASCII.ms_BlockSize * ( DisplayASCII.ms_BlockRepeat * Config.ms_GameHeight + DisplayASCII.ms_SupLines ) );
+		DisplayASCII.ms_NbLines = Math.floor( inHeight / DisplayASCII.ms_BlockSize );
+		DisplayASCII.ms_NbColumns = Math.round( DisplayASCII.ms_NbLines * Config.ms_GameWidth / Config.ms_GameHeight );
+		DisplayASCII.ms_Canvas.css( "width", DisplayASCII.ms_BlockSize * DisplayASCII.ms_NbColumns );
+		DisplayASCII.ms_Canvas.css( "height", DisplayASCII.ms_BlockSize * DisplayASCII.ms_NbLines );
 	}
 };

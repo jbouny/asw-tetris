@@ -1,3 +1,12 @@
+/** 
+ * @author Jérémy BOUNY / https://github.com/jbouny | http://www.jeremybouny.fr
+ * @file js/game.js
+ * 
+ * Part of the project asw-tetris https://github.com/jbouny/asw-tetris
+ * 
+ * Contains all the game core and game objects.
+ */
+
 /**
  * Represents a unique block that compose shapes.
  */
@@ -16,8 +25,8 @@ Block.prototype.RotateAround = function( inCenterX, inCenterY, inAngle )
 	// Rotate point and translate point back
 	var aNewX = ( this.m_X * Math.cos( inAngle ) - this.m_Y * Math.sin( inAngle ) ) + inCenterX;
 	var aNewY = ( this.m_X * Math.sin( inAngle ) + this.m_Y * Math.cos( inAngle ) ) + inCenterY;
-	this.m_X = aNewX;
-	this.m_Y = aNewY;
+	this.m_X = Math.round( aNewX );
+	this.m_Y = Math.round( aNewY );
 };
 
 /**
@@ -107,7 +116,7 @@ var ShapeFactory =
 			{
 				if( aBlocks[i][j] == 1 )
 				{
-					var aX = Math.round( Config.ms_MiddleX - 1 + j ); 
+					var aX = Math.round( Config.ms_GameWidth * 0.5 - 1 + j ); 
 					var aY = i; 
 					
 					aMinX = Math.min( aMinX, aX );
@@ -135,6 +144,7 @@ var Game = {
 	ms_Shape: null,
 	ms_Blocks: null,
 	ms_IsEnd: false,
+	ms_IsPause: false,
 	
 	Initialize: function()
 	{
@@ -149,8 +159,10 @@ var Game = {
 	
 	Update: function()
 	{
-		if( Game.ms_Shape != null && Game.ms_Shape.Update( Game.ms_Blocks ) )
+		// If the game is not in pause or ended or if there is a shape, update the game
+		if( ! Game.ms_IsPause && ! Game.ms_IsEnd && Game.ms_Shape != null && Game.ms_Shape.Update( Game.ms_Blocks ) )
 		{
+			// If the current shape is stopped, create a new shape
 			var aShape = Game.ms_Shape;
 			Game.ms_Shape = ShapeFactory.RandomShape();
 			for( var i = 0; i < aShape.m_Blocks.length; ++i ) 
@@ -158,15 +170,18 @@ var Game = {
 				var aBlock = aShape.m_Blocks[i];
 				Game.ms_Blocks[Math.round( aBlock.m_Y )][Math.round( aBlock.m_X )] = aBlock	;
 			}
-			Game.CheckLines();
-			
-			/*if( Game.ms_Shape.HasConflict() )
-			{*/
+			// Check game over
+			if( Game.ms_Shape.HasConflict( Game.ms_Blocks ) )
+				Game.ms_IsEnd = true;
+			else
+				Game.CheckLines();
 		}
 	},
 	
 	Rotate: function()
 	{
+		if( Game.ms_IsPause || Game.ms_IsEnd )
+			return;
 		Game.ms_Shape.Rotate( Math.PI / 2 );
 		if( Game.ms_Shape.HasConflict( Game.ms_Blocks ) )
 			Game.ms_Shape.Rotate( - Math.PI / 2 );
@@ -174,13 +189,22 @@ var Game = {
 	
 	Fall: function()
 	{
+		if( Game.ms_IsPause || Game.ms_IsEnd )
+			return;
 		while( Game.ms_Shape.TryTranslate( 0, 1, Game.ms_Blocks ) );
 		Game.Update();
 	},
 	
-	Left: function() { Game.ms_Shape.TryTranslate( -1, 0, Game.ms_Blocks ); },
-	Right: function() { Game.ms_Shape.TryTranslate( 1, 0, Game.ms_Blocks ); },
-	Down: function() { Game.ms_Shape.TryTranslate( 0, 1, Game.ms_Blocks ); },
+	TranslateShape: function( inX, inY )
+	{
+		if( Game.ms_IsPause || Game.ms_IsEnd )
+			return;
+		Game.ms_Shape.TryTranslate( inX, inY, Game.ms_Blocks );
+	},
+	
+	Left: function() { Game.TranslateShape( -1, 0 ); },
+	Right: function() { Game.TranslateShape( 1, 0 ); },
+	Down: function() { Game.TranslateShape( 0, 1 ); },
 	
 	RemoveLine: function( inId )
 	{
@@ -214,5 +238,12 @@ var Game = {
 			if( aRemove )
 				Game.RemoveLine( aLine );
 		}
+	},
+	
+	Pause: function() 
+	{ 
+		Game.ms_IsPause = ! Game.ms_IsPause; 
+		if( !Game.ms_IsPause )
+			this.Update();
 	}
 };

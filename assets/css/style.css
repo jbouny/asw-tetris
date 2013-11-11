@@ -26,8 +26,8 @@ body {
 #canvas-ascii {
 	margin : auto;
 	font-family : "Courier New", Courier, monospace;
-	line-height : 11px;
-	font-size : 18px;
+	line-height : 22px;
+	font-size : 36px;
 	border : 1px solid #555;
 	overflow : hidden;
 }

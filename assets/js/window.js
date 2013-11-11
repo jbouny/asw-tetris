@@ -1,3 +1,12 @@
+/** 
+ * @author Jérémy BOUNY / https://github.com/jbouny | http://www.jeremybouny.fr
+ * @file js/window.js
+ * 
+ * Part of the project asw-tetris https://github.com/jbouny/asw-tetris
+ * 
+ * Manage the user actions and provide some callbacks to use them.
+ */
+
 var Window = {
 	ms_Width: 0,
 	ms_Height: 0,

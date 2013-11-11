@@ -1,8 +1,19 @@
+/** 
+ * @author Jérémy BOUNY / https://github.com/jbouny | http://www.jeremybouny.fr
+ * @file js/main.js
+ * 
+ * Part of the project asw-tetris https://github.com/jbouny/asw-tetris
+ * 
+ * Main file that provide the start of the game.
+ * Initialize all other files and start them.
+ */
+ 
 function MainLoop()
 {
 	setTimeout( "MainLoop()", 500 );
 	Game.Update();
-	Display.ms_View.Display();
+	if( Display.ms_View != null )
+		Display.ms_View.Display();
 }
 
 function Play( inSound ) 
@@ -22,27 +33,33 @@ function Play( inSound )
 		}
 	}
 	else
-		alert( 'HTML5 Audio is not supported by your browser!' );
+		consol.log( 'HTML5 Audio is not supported by your browser.' );
 }
 
 $( function() {
+	var aViewers = [ DisplayASCII, Display2D ];
+	if( Display3D.Enable )
+	{
+		aViewers.push( Display3D );
+		aViewers.push( Display3DShader );
+	}
 	
 	// Initialization of game configuration, window management (user actions), game and viewer selector
-	Config.Initialize();
 	Window.Initialize();
 	Game.Initialize();
-	Display.Initialize();
+	Display.Initialize( aViewers );
 	
 	// Initialize the Wrapping that permits to link the user, the game and the current viewer
-	Window.RotateCallback = function() { Game.Rotate(); Display.ms_View.Display(); }
-	Window.LeftCallback = function() { Game.Left(); Display.ms_View.Display(); }
-	Window.RightCallback = function() { Game.Right(); Display.ms_View.Display(); }
-	Window.FallCallback = function() { Game.Fall(); Display.ms_View.Display(); }
-	Window.DownCallback = function() { Game.Down(); Display.ms_View.Display(); }
-	Window.ResizeCallback = function( inWidth, inHeight ) { Display.ms_View.Resize( inWidth, inHeight ); } 
-	Window.ChangeViewCallback = function() { Display.SelectNext(); }
+	Window.RotateCallback = function() { Game.Rotate(); Display.ms_View.Display(); };
+	Window.LeftCallback = function() { Game.Left(); Display.ms_View.Display(); };
+	Window.RightCallback = function() { Game.Right(); Display.ms_View.Display(); };
+	Window.FallCallback = function() { Game.Fall(); Display.ms_View.Display(); };
+	Window.DownCallback = function() { Game.Down(); Display.ms_View.Display(); };
+	Window.ResizeCallback = function( inWidth, inHeight ) { Display.ms_View.Resize( inWidth, inHeight ); } ;
+	Window.ChangeViewCallback = function() { Display.SelectNext(); };
+	Window.PauseCallback = function() { Game.Pause(); Display.ms_View.Display(); };
 	
-	Display.Select( '3d' );
+	Display.Select( '2d' );
 	
 	// Start the game
 	setTimeout( "MainLoop()", 500 );
