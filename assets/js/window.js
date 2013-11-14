@@ -18,30 +18,67 @@ var Window = {
 		39: "Window.RightCallback()",			// Move right
 		32: "Window.FallCallback()",			// Fall on the ground
 		40: "Window.DownCallback()",			// Move down
+		67: "Window.NextViewCallback()",		// Change viewer
+		70: "Window.ToggleFullScreen()",		// Toggle fullscreen
 		80: "Window.PauseCallback()",			// Pause
-		67: "Window.ChangeViewCallback()"		// Change viewer
+		82: "Window.ReloadCallback()",			// Reload
+		01: "Window.PrevViewCallback()"			// Previous view
 	},
 	
 	Initialize: function()
 	{
 		Window.UpdateSize();
+		
+		// Create callbacks from keyboard
 		$(document).keydown( function( inEvent ) { Window.CallAction( inEvent.keyCode ); } ) ;
 		$(window).resize( function( inEvent ) {
+			console.log( inEvent );
 			Window.UpdateSize();
 			Window.ResizeCallback( Window.ms_Width, Window.ms_Height );
 		} );
 		
-		$( '#ctrl-left' ).click( function( inEvent ) { Window.CallAction( 37 ); inEvent.stopPropagation(); } );
-		$( '#ctrl-rotate' ).click( function( inEvent ) { Window.CallAction( 38 ); inEvent.stopPropagation(); } );
-		$( '#ctrl-right' ).click( function( inEvent ) { Window.CallAction( 39 ); inEvent.stopPropagation(); } );
-		$( '#ctrl-fall' ).click( function( inEvent ) { Window.CallAction( 32 ); inEvent.stopPropagation(); } );
-		$( '#ctrl-down' ).click( function( inEvent ) { Window.CallAction( 40 ); inEvent.stopPropagation(); } );
-		$( '#ctrl-switch' ).click( function( inEvent ) { Window.CallAction( 67 ); inEvent.stopPropagation(); } );
+		// Create callbacks from buttons and touch actions
+		
+		// Full screen
+		$( '#fullscreen' ).click( function() { Window.CallAction( 70 ); } );
+		
+		// Left
+		var aLeftAction = function( inEvent ) { Window.CallAction( 37 ); inEvent.stopPropagation(); };
+		$( 'body' ).hammer( { swipe_velocity: 0.1 } ).on( "swipeleft", aLeftAction );
+		
+		// Rotate
+		var aRotateAction = function( inEvent ) { Window.CallAction( 38 ); inEvent.stopPropagation(); };
+		$( 'body' ).hammer( { swipe_velocity: 0.1 } ).on( "swipeup", aRotateAction );
+		
+		// Right
+		var aRightAction = function( inEvent ) { Window.CallAction( 39 ); inEvent.stopPropagation(); };
+		$( 'body' ).hammer( { swipe_velocity: 0.1 } ).on( "swiperight", aRightAction );
+		
+		// Fall
+		var aFallAction = function( inEvent ) { Window.CallAction( 32 ); inEvent.stopPropagation(); };
+		$( 'body' ).hammer( { swipe_velocity: 0.1 } ).on( "swipedown", aFallAction );
+		
+		// Down
+		var aDownAction = function( inEvent ) { Window.CallAction( 40 ); inEvent.stopPropagation(); };
+		
+		// Switch view
+		var aSwitchAction = function( inEvent ) { Window.CallAction( 67 ); inEvent.stopPropagation(); };
+		$( '#view_prev' ).click( function( inEvent ) { Window.CallAction( 01 ); inEvent.stopPropagation(); } );
+		$( '#view_next' ).click( aSwitchAction );
+		$( 'body' ).hammer( { swipe_min_touches: 2, swipe_max_touches: 2, swipe_velocity: 0.1 } ).on( "pinchout", aSwitchAction );
+		
+		// Pause
+		var aPauseAction = function( inEvent ) { Window.CallAction( 80 ); inEvent.stopPropagation(); };
+		$( '#pause' ).click( aPauseAction );
+		
+		// Reload
+		var aReloadAction = function( inEvent ) { Window.CallAction( 82 ); inEvent.stopPropagation(); };
+		$( '#reload' ).click( aReloadAction );
 	},
 	UpdateSize: function()
 	{
 		Window.ms_Width = $(window).width();
-		Window.ms_Height = $(window).height() - 5;
+		Window.ms_Height = $(window).height() - 22;
 		Window.ms_MiddleX = Window.ms_Width * 0.5;
 		Window.ms_MiddleY = Window.ms_Height * 0.5;
 	},
@@ -53,7 +90,27 @@ var Window = {
 			return false ;
 		}
 	},
-	
+	ToggleFullScreen: function()
+	{
+		if( !document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement ) 
+		{
+			if( document.documentElement.requestFullscreen )
+				document.documentElement.requestFullscreen();
+			else if( document.documentElement.mozRequestFullScreen )
+				document.documentElement.mozRequestFullScreen();
+			else if( document.documentElement.webkitRequestFullscreen )
+				document.documentElement.webkitRequestFullscreen( Element.ALLOW_KEYBOARD_INPUT );
+		} 
+		else 
+		{
+			if( document.cancelFullScreen )
+				document.cancelFullScreen();
+			else if( document.mozCancelFullScreen )
+				document.mozCancelFullScreen();
+			else if ( document.webkitCancelFullScreen )
+				document.webkitCancelFullScreen();
+		}
+	},	
 	ResizeCallback: function( inWidth, inHeight ) {},
 	LeftCallback: function() {},
 	RightCallback: function() {},
@@ -61,5 +118,7 @@ var Window = {
 	PauseCallback: function() {},
 	FallCallback: function() {},
 	DownCallback: function() {},
-	ChangeViewCallback: function() {}
+	ReloadCallback: function() {},
+	NextViewCallback: function() {},
+	PrevViewCallback: function() {}
 };

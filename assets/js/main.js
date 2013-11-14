@@ -10,7 +10,7 @@
  
 function MainLoop()
 {
-	setTimeout( "MainLoop()", 500 );
+	setTimeout( "MainLoop()", Game.GetTimeout() );
 	Game.Update();
 	if( Display.ms_View != null )
 		Display.ms_View.Display();
@@ -56,12 +56,14 @@ $( function() {
 	Window.FallCallback = function() { Game.Fall(); Display.ms_View.Display(); };
 	Window.DownCallback = function() { Game.Down(); Display.ms_View.Display(); };
 	Window.ResizeCallback = function( inWidth, inHeight ) { Display.ms_View.Resize( inWidth, inHeight ); } ;
-	Window.ChangeViewCallback = function() { Display.SelectNext(); };
+	Window.NextViewCallback = function() { Display.SelectNext(); };
+	Window.PrevViewCallback = function() { Display.SelectPrev(); };
 	Window.PauseCallback = function() { Game.Pause(); Display.ms_View.Display(); };
+	Window.ReloadCallback = function() { Game.Reload(); Display.ms_View.Display(); };
 	
 	Display.Select( '2d' );
 	
 	// Start the game
-	setTimeout( "MainLoop()", 500 );
+	setTimeout( "MainLoop()", Game.GetTimeout() );
 	Play( 'assets/mp3/tetris.mp3' );
 } );

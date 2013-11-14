@@ -91,6 +91,7 @@ Shape.prototype.Update = function( inBlocks )
 var ShapeFactory =
 {
 	Type: { I : 0, J : 1, L : 2, O : 3, Z : 4, T : 5, S : 6 },
+	RevertType: [ 'I', 'J', 'L', 'O', 'Z', 'T', 'S' ],
 	ms_Shapes: { 
 		0: [ [ 0, 1, 0 ], [ 0, 1, 0 ], [ 0, 1, 0 ], [ 0, 1, 0 ] ],
 		1: [ [ 0, 1, 0 ], [ 0, 1, 0 ], [ 1, 1, 0 ], [ 0, 0, 0 ] ],
@@ -100,9 +101,12 @@ var ShapeFactory =
 		5: [ [ 0, 1, 0 ], [ 1, 1, 1 ], [ 0, 0, 0 ], [ 0, 0, 0 ] ],
 		6: [ [ 0, 1, 1 ], [ 1, 1, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ] ]
 	},
+	ms_NbShapes: 0,
+	ms_NextShape: 0,
 	CreateShape: function( inType )
 	{
-		var aBlocks = ShapeFactory.ms_Shapes[inType];
+		this.ms_NbShapes++;
+		var aBlocks = this.ms_Shapes[inType];
 		var aBlocksShape = new Array();
 		
 		var aMinX = Number.MAX_VALUE;
@@ -133,8 +137,14 @@ var ShapeFactory =
 	},
 	RandomShape: function()
 	{
-		return ShapeFactory.CreateShape( Math.floor( Math.random() * 7 ) );
-	}
+		var aNewType = this.ms_NextShape;
+		this.ms_NextShape = Math.floor( Math.random() * 7 );
+		return ShapeFactory.CreateShape( aNewType );
+	},
+	Next: function()
+	{
+		return this.RevertType[this.ms_NextShape];
+	},
 };
 
 /**
@@ -145,66 +155,71 @@ var Game = {
 	ms_Blocks: null,
 	ms_IsEnd: false,
 	ms_IsPause: false,
+	ms_Score: 0,
 	
 	Initialize: function()
 	{
 		// Get an alea shape at the beginning
-		Game.ms_Shape = ShapeFactory.RandomShape();
+		this.ms_Shape = ShapeFactory.RandomShape();
 		
 		// Initialize game board
-		Game.ms_Blocks = new Array( Config.ms_GameHeight );
+		this.ms_Blocks = new Array( Config.ms_GameHeight );
 		for( var i = 0; i < Config.ms_GameHeight; ++i )
-			Game.ms_Blocks[i] = new Array( Config.ms_GameWidth );
+			this.ms_Blocks[i] = new Array( Config.ms_GameWidth );
 	},
 	
 	Update: function()
 	{
 		// If the game is not in pause or ended or if there is a shape, update the game
-		if( ! Game.ms_IsPause && ! Game.ms_IsEnd && Game.ms_Shape != null && Game.ms_Shape.Update( Game.ms_Blocks ) )
+		if( ! this.ms_IsPause && ! this.ms_IsEnd && this.ms_Shape != null && this.ms_Shape.Update( this.ms_Blocks ) )
 		{
 			// If the current shape is stopped, create a new shape
-			var aShape = Game.ms_Shape;
-			Game.ms_Shape = ShapeFactory.RandomShape();
+			var aShape = this.ms_Shape;
+			this.ms_Shape = ShapeFactory.RandomShape();
 			for( var i = 0; i < aShape.m_Blocks.length; ++i ) 
 			{
 				var aBlock = aShape.m_Blocks[i];
-				Game.ms_Blocks[Math.round( aBlock.m_Y )][Math.round( aBlock.m_X )] = aBlock	;
+				this.ms_Blocks[Math.round( aBlock.m_Y )][Math.round( aBlock.m_X )] = aBlock	;
 			}
 			// Check game over
-			if( Game.ms_Shape.HasConflict( Game.ms_Blocks ) )
-				Game.ms_IsEnd = true;
+			if( this.ms_Shape.HasConflict( this.ms_Blocks ) )
+				this.ms_IsEnd = true;
 			else
-				Game.CheckLines();
+			{
+				var aNbLines = this.CheckLines();
+				this.ms_Score += Math.round( 1000 * aNbLines * aNbLines * 0.5 );
+			}
 		}
+		Display.DisplayInfos();
 	},
 	
 	Rotate: function()
 	{
-		if( Game.ms_IsPause || Game.ms_IsEnd )
+		if( this.ms_IsPause || this.ms_IsEnd )
 			return;
-		Game.ms_Shape.Rotate( Math.PI / 2 );
-		if( Game.ms_Shape.HasConflict( Game.ms_Blocks ) )
-			Game.ms_Shape.Rotate( - Math.PI / 2 );
+		this.ms_Shape.Rotate( Math.PI / 2 );
+		if( this.ms_Shape.HasConflict( this.ms_Blocks ) )
+			this.ms_Shape.Rotate( - Math.PI / 2 );
 	},
 	
 	Fall: function()
 	{
-		if( Game.ms_IsPause || Game.ms_IsEnd )
+		if( this.ms_IsPause || this.ms_IsEnd )
 			return;
-		while( Game.ms_Shape.TryTranslate( 0, 1, Game.ms_Blocks ) );
-		Game.Update();
+		while( this.ms_Shape.TryTranslate( 0, 1, this.ms_Blocks ) );
+		this.Update();
 	},
 	
 	TranslateShape: function( inX, inY )
 	{
-		if( Game.ms_IsPause || Game.ms_IsEnd )
+		if( this.ms_IsPause || this.ms_IsEnd )
 			return;
-		Game.ms_Shape.TryTranslate( inX, inY, Game.ms_Blocks );
+		this.ms_Shape.TryTranslate( inX, inY, this.ms_Blocks );
 	},
 	
-	Left: function() { Game.TranslateShape( -1, 0 ); },
-	Right: function() { Game.TranslateShape( 1, 0 ); },
-	Down: function() { Game.TranslateShape( 0, 1 ); },
+	Left: function() { this.TranslateShape( -1, 0 ); },
+	Right: function() { this.TranslateShape( 1, 0 ); },
+	Down: function() { this.TranslateShape( 0, 1 ); },
 	
 	RemoveLine: function( inId )
 	{
@@ -212,9 +227,9 @@ var Game = {
 		{
 			for( var j = 0; j < Config.ms_GameWidth; ++j )
 			{
-				Game.ms_Blocks[i][j] = Game.ms_Blocks[i-1][j];
-				if( Game.ms_Blocks[i][j] != null )
-					Game.ms_Blocks[i][j].m_Y++;
+				this.ms_Blocks[i][j] = this.ms_Blocks[i-1][j];
+				if( this.ms_Blocks[i][j] != null )
+					this.ms_Blocks[i][j].m_Y++;
 			}
 		}
 	},
@@ -222,12 +237,13 @@ var Game = {
 	CheckLines: function()
 	{
 		var aLine = Config.ms_GameHeight - 1;
+		var aNbRemove = 0;
 		while( aLine >= 0 )
 		{
 			var aRemove = true;
 			for( var j = 0; j < Config.ms_GameWidth; ++j )
 			{
-				if( Game.ms_Blocks[aLine][j] == null )
+				if( this.ms_Blocks[aLine][j] == null )
 				{
 					aRemove = false;
 					aLine--;
@@ -236,14 +252,35 @@ var Game = {
 			}
 			
 			if( aRemove )
-				Game.RemoveLine( aLine );
+			{
+				this.RemoveLine( aLine );
+				aNbRemove ++;
+			}
 		}
+		return aNbRemove;
 	},
 	
 	Pause: function() 
 	{ 
-		Game.ms_IsPause = ! Game.ms_IsPause; 
-		if( !Game.ms_IsPause )
+		this.ms_IsPause = ! this.ms_IsPause; 
+		if( !this.ms_IsPause )
 			this.Update();
-	}
+	},
+	
+	Reload: function()
+	{
+		this.ms_Score = 0;
+		ShapeFactory.ms_NbShapes = 0;
+		this.ms_IsEnd = false;
+		this.ms_IsPause = false;
+		this.ms_Shape = ShapeFactory.RandomShape();
+		this.ms_Blocks = new Array( Config.ms_GameHeight );
+		for( var i = 0; i < Config.ms_GameHeight; ++i )
+			this.ms_Blocks[i] = new Array( Config.ms_GameWidth );
+	},
+	
+	GetTimeout: function()
+	{
+		return Config.ms_BaseTimeout * Math.pow( Config.ms_EvolTimeout, Math.floor( ShapeFactory.ms_NbShapes / Config.ms_LinesLevel ) );
+	},
 };

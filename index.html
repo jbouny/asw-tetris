@@ -2,34 +2,32 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>Tetris</title>
+		<title>A Scalable Web Tetris - Jérémy BOUNY</title>
 		<link href="assets/css/bootstrap.min.css" rel="stylesheet">
 		<link href="assets/css/style.css" rel="stylesheet">
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="mobile-web-app-capable" content="yes" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 	</head>
 
 	<body>
-		<div id="style-selector">
-			<button id="select-ascii">ASCII</button>
-			<button id="select-2d">2D</button>
-			<button id="select-3d">3D</button>
-			<button id="select-3dshader">++3D</button>
-		</div>
-		<!--
-		<div id="controls">
-			<div id="ctrl-left">Left</div>
-			<div id="ctrl-right">Right</div>
-			<div id="ctrl-rotate">Rotate</div>
-			<div id="ctrl-fall">Fall</div>
-			<div id="ctrl-down">Down</div>
-			<div id="ctrl-switch">Switch</div>
-		</div>
-		-->
+		<div id="style-selector"></div>
+		
+		<div class="action-icon" id="view_prev"></div>
+		<div class="action-icon" id="view_next"></div>
+		<div class="action-icon" id="pause"></div>
+		<div class="action-icon" id="reload"></div>
+		<div class="action-icon" id="fullscreen"></div>
+		
+		<div id="infos"></div>
 		<canvas id="canvas-2d" class="viewer"></canvas>
 		<div id="canvas-ascii" class="viewer"></div>
 		<div id="canvas-3d" class="viewer"></div>
 		<div id="canvas-3dshader" class="viewer"></div>
 		
 		<script src="assets/libs/jquery.min.js"></script>
+		<script src="assets/libs/hammer.min.js"></script>
+		<script src="assets/libs/jquery.hammer.min.js"></script>
 		<script src="assets/libs/three.min.js"></script>
 		<script src="assets/libs/shaders/BleachBypassShader.js"></script>
 		<script src="assets/libs/shaders/ColorCorrectionShader.js"></script>

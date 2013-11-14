@@ -15,8 +15,8 @@
 	ms_Colors: [ "#0FF", "#00F", "#F90", "#FF0", "#F00", "#C0F", "#0F0" ],
 	
 	Id: function() { return '2d'; },
-	ConvertX: function( inX ) { return Window.ms_MiddleX - ( Config.ms_GameWidth * 0.5 - inX ) * Display2D.ms_Scale ; },
-	ConvertY: function( inY ) { return inY * Display2D.ms_Scale ; },
+	Title: function() { return '2D'; },
+	ConvertX: function( inX ) { return Window.ms_MiddleX - ( Config.ms_GameWidth * 0.5 - inX ) * Display2D.ms_Scale  },
 	Initialize: function( inIdCanvas )
 	{
 		Display2D.ms_Canvas = document.getElementById( 'canvas-' + Display2D.Id() );
@@ -32,7 +32,7 @@
 		Display2D.ms_Context.fillStyle = "#000";
 		Display2D.ms_Context.fillRect( 0, 0, Window.ms_Width, Window.ms_Height );
 		Display2D.ms_Context.strokeStyle = "#555";
-		Display2D.ms_Context.strokeRect( Display2D.ConvertX( 0 ), Display2D.ConvertY( 0 ), Display2D.ms_Scale * Config.ms_GameWidth, Display2D.ms_Scale * Config.ms_GameHeight );
+		Display2D.ms_Context.strokeRect( Window.ms_MiddleX - Config.ms_GameWidth * 0.5 * Display2D.ms_Scale, 0, Display2D.ms_Scale * Config.ms_GameWidth, Display2D.ms_Scale * Config.ms_GameHeight );
 		
 		// Draw fixed blocks
 		for( var i = 0; i < Config.ms_GameHeight; ++i )
@@ -42,7 +42,7 @@
 				if( Game.ms_Blocks[i][j] != null )
 				{
 					Display2D.ms_Context.fillStyle = Display2D.ms_Colors[Game.ms_Blocks[i][j].m_Type];
-					Display2D.ms_Context.fillRect( Display2D.ConvertX( j ), Display2D.ConvertY( i ), aBlockSize, aBlockSize ); 
+					Display2D.ms_Context.fillRect( Display2D.ConvertX( j ), i * Display2D.ms_Scale, aBlockSize, aBlockSize ); 
 				}
 			}
 		}
@@ -53,7 +53,7 @@
 			for( var i = 0; i < Game.ms_Shape.m_Blocks.length; ++i ) 
 			{
 				var aBlock = Game.ms_Shape.m_Blocks[i];
-				Display2D.ms_Context.fillRect( Display2D.ConvertX( aBlock.m_X ), Display2D.ConvertY( aBlock.m_Y ), aBlockSize, aBlockSize ); 
+				Display2D.ms_Context.fillRect( Display2D.ConvertX( aBlock.m_X ), aBlock.m_Y * Display2D.ms_Scale , aBlockSize, aBlockSize ); 
 			}
 		}
 		

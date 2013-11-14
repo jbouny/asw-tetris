@@ -10,11 +10,12 @@
 var DisplayASCII =
 {
 	ms_Canvas: null,
-	ms_BlockSize: 22,
+	ms_BlockSize: 16,
 	ms_NbLines: 0,
 	ms_NbColumns: 0,
 	
 	Id: function() { return 'ascii'; },
+	Title: function() { return 'ASCII'; },
 	
 	Initialize: function( inIdCanvas )
 	{

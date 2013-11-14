@@ -16,6 +16,7 @@ var Display3D =
 	ms_CubeGeometry: null,
 	ms_Texts: null,
 	ms_LightStrength: 100,
+	ms_IsDisplaying: false,
 	Blocks3D: {
 		ms_Materials: [],
 		ms_Colors: [ 0x00ffff, 0x0000ff, 0xff9900, 0xffff00, 0xff0000, 0xcc00ff, 0x00ff00, 0x555555 ],
@@ -28,6 +29,7 @@ var Display3D =
 	},
 	
 	Id: function() { return '3d'; },
+	Title: function() { return '3D'; },
 	
 	Enable: ( function() {
         try { 
@@ -41,7 +43,7 @@ var Display3D =
 	{
 		this.Blocks3D.Initialize();
 		this.ms_Canvas = $( '#canvas-' + this.Id() );
-		this.ms_CubeGeometry = new THREE.CubeGeometry( 0.92, 0.92, 0.92 );
+		this.ms_CubeGeometry = new THREE.CubeGeometry( 0.94, 0.94, 0.94 );
 		
 		// Initialize Renderer, Camera and Scene
 		this.ms_Renderer = this.Enable? new THREE.WebGLRenderer() : new THREE.CanvasRenderer();
@@ -96,27 +98,32 @@ var Display3D =
 	
 	Display: function()
 	{
-		var aGroup = new THREE.Object3D();
-		
-		// Create the movable object
-		if( Game.ms_Shape != null )
-			for( var i = 0; i < Game.ms_Shape.m_Blocks.length; ++i ) 
-				aGroup.add( this.CreateBlock( Game.ms_Shape.m_Blocks[i] ) );
-		
-		// Create fixed blocks
-		for( var i = 0; i < Config.ms_GameHeight; ++i )
-			for( var j = 0; j < Config.ms_GameWidth; ++j )
-				if( Game.ms_Blocks[i][j] != null )
-					aGroup.add( this.CreateBlock( Game.ms_Blocks[i][j] ) );
-		
-		// Pause or game over
-		if( Game.ms_IsEnd || Game.ms_IsPause )
-			aGroup.add( this.ms_Texts[Game.ms_IsEnd ? "Game Over" : "Pause"] );
-		
-		// Render the group of object, then remove it
-		this.ms_Scene.add( aGroup );
-		this.Render();
-		this.ms_Scene.remove( aGroup );
+		if( !this.ms_IsDisplaying )
+		{
+			this.ms_IsDisplaying = true;
+			var aGroup = new THREE.Object3D();
+			
+			// Create the movable object
+			if( Game.ms_Shape != null )
+				for( var i = 0; i < Game.ms_Shape.m_Blocks.length; ++i ) 
+					aGroup.add( this.CreateBlock( Game.ms_Shape.m_Blocks[i] ) );
+			
+			// Create fixed blocks
+			for( var i = 0; i < Config.ms_GameHeight; ++i )
+				for( var j = 0; j < Config.ms_GameWidth; ++j )
+					if( Game.ms_Blocks[i][j] != null )
+						aGroup.add( this.CreateBlock( Game.ms_Blocks[i][j] ) );
+			
+			// Pause or game over
+			if( Game.ms_IsEnd || Game.ms_IsPause )
+				aGroup.add( this.ms_Texts[Game.ms_IsEnd ? "Game Over" : "Pause"] );
+			
+			// Render the group of object, then remove it
+			this.ms_Scene.add( aGroup );
+			this.Render();
+			this.ms_Scene.remove( aGroup );
+			this.ms_IsDisplaying = false;
+		}
 	},
 	
 	Render: function()

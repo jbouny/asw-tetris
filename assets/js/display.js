@@ -23,9 +23,11 @@ var Display =
 		
 		for( var aId in this.ms_Viewers )
 			this.ms_IdsViewers.push( aId );
-			
+		
+		var aButtonContainer = $( '#style-selector' );
 		for( var aId in this.ms_Viewers )
 		{
+			aButtonContainer.append( "<button id=\"select-" + aId + "\">" + this.ms_Viewers[aId].Title() + "</button>" );
 			$( '#select-' + aId ).click( function() { 
 				Display.Select( $( this ).attr( 'id' ).substring( 7 ) );
 			} );
@@ -50,12 +52,14 @@ var Display =
 		{
 			if( this.ms_InitializedViewers.indexOf( inId ) === -1 )
 				this.InitializeView( inId );
-				
+			
 			this.ms_View = this.ms_Viewers[inId];
 			this.ms_CurrentId = this.ms_IdsViewers.indexOf( inId );
 			Window.ResizeCallback( Window.ms_Width, Window.ms_Height );
 			this.ms_View.Display();
+			$( '#style-selector button' ).attr('class', '');
 			$( '.viewer' ).hide();
+			$( '#select-' + inId ).attr('class', 'selected');
 			$( '#canvas-' + inId ).show();
 		}
 	},
@@ -63,5 +67,15 @@ var Display =
 	SelectNext: function()
 	{
 		this.Select( this.ms_IdsViewers[ ( this.ms_CurrentId + 1 ) % this.ms_IdsViewers.length ] );
+	},
+	
+	SelectPrev: function()
+	{
+		this.Select( this.ms_IdsViewers[ ( this.ms_CurrentId + this.ms_IdsViewers.length - 1 ) % this.ms_IdsViewers.length ] );
+	},
+	
+	DisplayInfos: function()
+	{
+		$( '#infos' ).html( 'Level: ' + Math.round( ShapeFactory.ms_NbShapes / Config.ms_LinesLevel ) + ' / Score: ' + Game.ms_Score + ' / Next: ' + ShapeFactory.Next() );
 	}
 };
