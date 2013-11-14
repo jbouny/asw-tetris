@@ -8,14 +8,7 @@
  * This view extend the file js/display3DShader.js and add some effects like reflection and shaders.
  */
 
-var Display3DShader = Object.create( Display3D );
-
-Display3DShader.ms_Composer = null;
-Display3DShader.ms_EffectFXAA = null;
-Display3DShader.ms_Mirror = null;
-Display3DShader.ms_LightStrength = 60;
-
-Display3DShader.Blocks3D  =
+var MaterialManager3DShader =
 {
 	ms_Materials: [],
 	ms_Colors: [ 0x00ffff, 0x0033ff, 0xff9900, 0xffff00, 0xff0000, 0xcc00ff, 0x33ff00, 0x555555 ],
@@ -27,6 +20,14 @@ Display3DShader.Blocks3D  =
 			this.ms_Materials.push( new THREE.MeshPhongMaterial( { normalMap: aNormalMap, color: this.ms_Colors[i] } ) );
 	}
 };
+
+var Display3DShader = Object.create( Display3D );
+
+Display3DShader.ms_Composer = null;
+Display3DShader.ms_EffectFXAA = null;
+Display3DShader.ms_Mirror = null;
+Display3DShader.ms_LightStrength = 60;
+Display3DShader.ms_PoolBlocks = new PoolBlocks3D( MaterialManager3DShader ),
 
 Display3DShader.Id = function() { return '3dshader'; };
 Display3DShader.Title = function() { return '++3D'; };

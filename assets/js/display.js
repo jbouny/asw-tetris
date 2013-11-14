@@ -76,6 +76,6 @@ var Display =
 	
 	DisplayInfos: function()
 	{
-		$( '#infos' ).html( 'Level: ' + Math.round( ShapeFactory.ms_NbShapes / Config.ms_LinesLevel ) + ' / Score: ' + Game.ms_Score + ' / Next: ' + ShapeFactory.Next() );
+		$( '#infos' ).html( 'Level: ' + Math.round( Game.ms_TotalLines / Config.ms_LinesLevel ) + ' / Score: ' + Game.ms_Score + ' / Next: ' + ShapeFactory.Next() );
 	}
 };

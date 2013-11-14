@@ -7,6 +7,57 @@
  * Display the tetris game in a simple 3D View.
  */
  
+ 
+/**
+ * Pool of 3D blocks
+ */
+function PoolBlocks3D( inMaterialManager )
+{
+	this.m_NbTypes = 7;
+	this.m_MaterialManager = inMaterialManager;
+	this.m_Blocks = null;
+	this.m_CubeGeometry = null;
+}
+PoolBlocks3D.prototype.Initialize = function()
+{
+	this.m_CubeGeometry = new THREE.CubeGeometry( 0.94, 0.94, 0.94 );
+	this.m_MaterialManager.Initialize();
+	this.m_Blocks = new Array( this.m_NbTypes );
+	for( var i = 0; i < this.m_NbTypes; ++i )
+		this.m_Blocks[i] = [];
+};
+PoolBlocks3D.prototype.Block = function( inBlock )
+{
+	var aCube = null;
+	// Check if an instance is free
+	if( this.m_Blocks[inBlock.m_Type].length > 0 )
+		aCube = this.m_Blocks[inBlock.m_Type].pop();
+	// Else, create it
+	else
+		aCube = new THREE.Mesh( this.m_CubeGeometry, this.m_MaterialManager.Mat( inBlock.m_Type ) );
+		
+	// Then, assign position
+	aCube.m_TetrisType = inBlock.m_Type;
+	aCube.position.set( Math.round( inBlock.m_X ) - Config.ms_GameWidth / 2 + 0.5, Config.ms_GameHeight - Math.round( inBlock.m_Y ), 0 );
+	return aCube;
+};
+PoolBlocks3D.prototype.Free = function( in3DBlock )
+{
+	this.m_Blocks[in3DBlock.m_TetrisType].push( in3DBlock );
+};
+
+var MaterialManager3D =
+{
+	ms_Materials: [],
+	ms_Colors: [ 0x00ffff, 0x0000ff, 0xff9900, 0xffff00, 0xff0000, 0xcc00ff, 0x00ff00, 0x555555 ],
+	Mat: function( inType ) { return this.ms_Materials[ inType ]; },
+	Initialize: function()
+	{
+		for( var i in this.ms_Colors )
+			this.ms_Materials.push( new THREE.MeshPhongMaterial( { color: this.ms_Colors[i] } ) );
+	}
+};
+ 
 var Display3D =
 {
 	ms_Canvas: null,
@@ -17,16 +68,7 @@ var Display3D =
 	ms_Texts: null,
 	ms_LightStrength: 100,
 	ms_IsDisplaying: false,
-	Blocks3D: {
-		ms_Materials: [],
-		ms_Colors: [ 0x00ffff, 0x0000ff, 0xff9900, 0xffff00, 0xff0000, 0xcc00ff, 0x00ff00, 0x555555 ],
-		Mat: function( inType ) { return this.ms_Materials[ inType ]; },
-		Initialize: function()
-		{
-			for( var i in this.ms_Colors )
-				this.ms_Materials.push( new THREE.MeshPhongMaterial( { color: this.ms_Colors[i] } ) );
-		}
-	},
+	ms_PoolBlocks: new PoolBlocks3D( MaterialManager3D ),
 	
 	Id: function() { return '3d'; },
 	Title: function() { return '3D'; },
@@ -41,7 +83,7 @@ var Display3D =
 	
 	Initialize: function( inIdCanvas )
 	{
-		this.Blocks3D.Initialize();
+		this.ms_PoolBlocks.Initialize();
 		this.ms_Canvas = $( '#canvas-' + this.Id() );
 		this.ms_CubeGeometry = new THREE.CubeGeometry( 0.94, 0.94, 0.94 );
 		
@@ -89,13 +131,6 @@ var Display3D =
 		return aLight;
 	},
 	
-	CreateBlock: function( inBlock )
-	{
-		var aCube = new THREE.Mesh( this.ms_CubeGeometry, this.Blocks3D.Mat( inBlock.m_Type ) );
-		aCube.position.set( Math.round( inBlock.m_X ) - Config.ms_GameWidth / 2 + 0.5, Config.ms_GameHeight - Math.round( inBlock.m_Y ), 0 );
-		return aCube;
-	},
-	
 	Display: function()
 	{
 		if( !this.ms_IsDisplaying )
@@ -106,13 +141,13 @@ var Display3D =
 			// Create the movable object
 			if( Game.ms_Shape != null )
 				for( var i = 0; i < Game.ms_Shape.m_Blocks.length; ++i ) 
-					aGroup.add( this.CreateBlock( Game.ms_Shape.m_Blocks[i] ) );
+					aGroup.add( this.ms_PoolBlocks.Block( Game.ms_Shape.m_Blocks[i] ) );
 			
 			// Create fixed blocks
 			for( var i = 0; i < Config.ms_GameHeight; ++i )
 				for( var j = 0; j < Config.ms_GameWidth; ++j )
 					if( Game.ms_Blocks[i][j] != null )
-						aGroup.add( this.CreateBlock( Game.ms_Blocks[i][j] ) );
+						aGroup.add( this.ms_PoolBlocks.Block( Game.ms_Blocks[i][j] ) );
 			
 			// Pause or game over
 			if( Game.ms_IsEnd || Game.ms_IsPause )
@@ -122,6 +157,10 @@ var Display3D =
 			this.ms_Scene.add( aGroup );
 			this.Render();
 			this.ms_Scene.remove( aGroup );
+			
+			for( var i = 0; i < aGroup.children.length; ++i )
+				this.ms_PoolBlocks.Free( aGroup.children[i] );
+			
 			this.ms_IsDisplaying = false;
 		}
 	},

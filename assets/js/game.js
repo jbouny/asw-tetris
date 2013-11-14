@@ -101,11 +101,9 @@ var ShapeFactory =
 		5: [ [ 0, 1, 0 ], [ 1, 1, 1 ], [ 0, 0, 0 ], [ 0, 0, 0 ] ],
 		6: [ [ 0, 1, 1 ], [ 1, 1, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ] ]
 	},
-	ms_NbShapes: 0,
 	ms_NextShape: 0,
 	CreateShape: function( inType )
 	{
-		this.ms_NbShapes++;
 		var aBlocks = this.ms_Shapes[inType];
 		var aBlocksShape = new Array();
 		
@@ -156,6 +154,7 @@ var Game = {
 	ms_IsEnd: false,
 	ms_IsPause: false,
 	ms_Score: 0,
+	ms_TotalLines: 0,
 	
 	Initialize: function()
 	{
@@ -188,6 +187,7 @@ var Game = {
 			{
 				var aNbLines = this.CheckLines();
 				this.ms_Score += Math.round( 1000 * aNbLines * aNbLines * 0.5 );
+				this.ms_TotalLines += aNbLines;
 			}
 		}
 		Display.DisplayInfos();
@@ -270,7 +270,7 @@ var Game = {
 	Reload: function()
 	{
 		this.ms_Score = 0;
-		ShapeFactory.ms_NbShapes = 0;
+		Game.ms_TotalLines = 0;
 		this.ms_IsEnd = false;
 		this.ms_IsPause = false;
 		this.ms_Shape = ShapeFactory.RandomShape();
@@ -281,6 +281,6 @@ var Game = {
 	
 	GetTimeout: function()
 	{
-		return Config.ms_BaseTimeout * Math.pow( Config.ms_EvolTimeout, Math.floor( ShapeFactory.ms_NbShapes / Config.ms_LinesLevel ) );
+		return Config.ms_BaseTimeout * Math.pow( Config.ms_EvolTimeout, Math.floor( Game.ms_TotalLines / Config.ms_LinesLevel ) );
 	},
 };
