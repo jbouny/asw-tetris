@@ -9,7 +9,7 @@ http://www.jeremybouny.fr/tetris/
 ### Features
 
 - Tetris game
-- Full cross plateform game (in browser)
+- Full cross platform game (in browser)
 - Use of specific inputs
   - Mouse / Keyboard and buttons on PC
   - Gestures and buttons on smartphone
@@ -19,27 +19,27 @@ http://www.jeremybouny.fr/tetris/
 
 ### Web technologies
 
-Some viewers permit to viualize the game :
+Some viewers allow to viualize the game :
 
-- ASCII Viewer : A simple way to display informations with characters.
+- ASCII Viewer : A simple way to display information with characters.
 - 2D canvas Viewer : The basic mode with simple blocks in 2D. Use of the canvas introduced with HTML5.
 - 3D Viewer : Use of others stuff introduced with HTML5 : WebGL. The viewer is based on the library three.js in order to simplify it.
-- Advanced 3D Viewer : This view extend the simple 3D viewer and add use of shaders and some others elements.
+- Advanced 3D Viewer : This view extends the simple 3D viewer and add use of shaders and some other elements.
 
-Others viewers will be surely developed as SVG Viewer, CSS Viewer, CSS3 Viewer and others.
+Other viewers will be surely developed as SVG Viewer, CSS Viewer, CSS3 Viewer and others.
 
 
-### Cross plateform
+### Cross platform
 
 /!\ This part is to complete in order to check the compatibility
 
-- Windows : Seems to work on all relative recents browsers
+- Windows : Seems to work on all relative recent browsers
   - Chrome [OK]
   - Firefox [OK]
   - Internet explorer [OK]
   - ?
   
-- Mac : Seems to work on all relative recents browsers
+- Mac : Seems to work on all relative recent browsers
   - Safari [OK]
   - Opera [OK]
   - ?
@@ -47,11 +47,10 @@ Others viewers will be surely developed as SVG Viewer, CSS Viewer, CSS3 Viewer a
 - IOS
   - ?
 
-- Android : Seems to work on recents browsers
+- Android : Seems to work on recent browsers
   - Chrome [OK]
   - Firefox [OK]
   - ?
-  - 
 
 ### Libraries
 
