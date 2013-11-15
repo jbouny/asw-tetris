@@ -37,12 +37,9 @@ function Play( inSound )
 }
 
 $( function() {
-	var aViewers = [ DisplayASCII, Display2D ];
+	var aViewers = [ DisplayASCII, Display2D, Display3D ];
 	if( Display3D.Enable )
-	{
-		aViewers.push( Display3D );
 		aViewers.push( Display3DShader );
-	}
 	
 	// Initialization of game configuration, window management (user actions), game and viewer selector
 	Window.Initialize();

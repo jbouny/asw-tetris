@@ -43,7 +43,8 @@ PoolBlocks3D.prototype.Block = function( inBlock )
 };
 PoolBlocks3D.prototype.Free = function( in3DBlock )
 {
-	this.m_Blocks[in3DBlock.m_TetrisType].push( in3DBlock );
+	if( typeof in3DBlock.m_TetrisType !== "undefined" )
+		this.m_Blocks[in3DBlock.m_TetrisType].push( in3DBlock );
 };
 
 var MaterialManager3D =
