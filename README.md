@@ -1,4 +1,4 @@
-asw-tetris : A Scalable Web Tetris
+ASW-Tetris : A Scalable Web Tetris
 ==========
 
 This project offer a way to explore possibilities of current web technology with a the visualization of a simple Tetris game.
@@ -28,29 +28,12 @@ Some viewers allow to viualize the game :
 
 Other viewers will be surely developed as SVG Viewer, CSS Viewer, CSS3 Viewer and others.
 
-
-### Cross platform
+### Cross platform / Compatibility
 
 /!\ This part is to complete in order to check the compatibility
 
-- Windows : Seems to work on all relative recent browsers
-  - Chrome [OK]
-  - Firefox [OK]
-  - Internet explorer [OK]
-  - ?
-  
-- Mac : Seems to work on all relative recent browsers
-  - Safari [OK]
-  - Opera [OK]
-  - ?
-  
-- IOS
-  - ?
-
-- Android : Seems to work on recent browsers
-  - Chrome [OK]
-  - Firefox [OK]
-  - ?
+The application was tested on Windows, Mac, Linux, iOS and Android and seems to works fine on every browsers.
+Some problems can been spotted like the imposssibility to use fullscreen or to use WebGL (but a 3D render in canvas instead of).
 
 ### Libraries
 
