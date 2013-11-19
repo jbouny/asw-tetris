@@ -1,7 +1,7 @@
 ASW-Tetris : A Scalable Web Tetris
 ==========
 
-This project offer a way to explore possibilities of current web technology with a the visualization of a simple Tetris game.
+This project offer a way to explore possibilities of current web technology with the visualization of a simple Tetris game.
 
 ### Demo
 http://www.jeremybouny.fr/tetris/
