@@ -65,7 +65,6 @@ var Display3D =
 	ms_Renderer: null,
 	ms_Camera: null, 
 	ms_Scene: null, 
-	ms_CubeGeometry: null,
 	ms_Texts: null,
 	ms_LightStrength: 100,
 	ms_IsDisplaying: false,
@@ -86,7 +85,6 @@ var Display3D =
 	{
 		this.ms_PoolBlocks.Initialize();
 		this.ms_Canvas = $( '#canvas-' + this.Id() );
-		this.ms_CubeGeometry = new THREE.CubeGeometry( 0.94, 0.94, 0.94 );
 		
 		// Initialize Renderer, Camera and Scene
 		this.ms_Renderer = this.Enable? new THREE.WebGLRenderer() : new THREE.CanvasRenderer();

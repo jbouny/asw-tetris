@@ -32,7 +32,6 @@ var Window = {
 		// Create callbacks from keyboard
 		$(document).keydown( function( inEvent ) { Window.CallAction( inEvent.keyCode ); } ) ;
 		$(window).resize( function( inEvent ) {
-			console.log( inEvent );
 			Window.UpdateSize();
 			Window.ResizeCallback( Window.ms_Width, Window.ms_Height );
 		} );
