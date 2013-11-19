@@ -43,3 +43,10 @@ The application is based on :
 - Hammer.JS v1.0.6dev (11/05/13) : Provide complete gesture recognition and abstraction of input (touch, mouse) (https://github.com/EightMedia/hammer.js/tree/v1.0.5)
 - jQuery plugin for Hammer.JS v1.0.0 : Use of Hammer events based on JQuery selector (https://github.com/EightMedia/jquery.hammer.js)
 - three.js r62 : Complete 3D library based on WebGL (https://github.com/mrdoob/three.js/)
+
+### Screenshots
+
+![Alt text](/screenshots/asw-tetris1.jpg "Example of a view in ASCII")
+![Alt text](/screenshots/asw-tetris2.jpg "Example of a view in 2D")
+![Alt text](/screenshots/asw-tetris3.jpg "Example of a view in 3D")
+![Alt text](/screenshots/asw-tetris4.jpg "Example of a view in extended 3D")
